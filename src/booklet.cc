@@ -33,9 +33,9 @@ Booklet::Booklet( Cycle *c, double w, double h ) :
 	cycle(c), 
 	stop_requested( false ),
 	surface( NULL ),
+	sort_order( Chart::UNK+1 ),
 	width( w ),
 	height( h ),
-	sort_order( Chart::UNK+1 ),
 	state( PENDING )
 {
 }
@@ -139,7 +139,7 @@ Booklet::do_work(){
 	{
 		(*airport)->bind( this, surface );
 		if ( airports.size() > 1 ){
-			cairo_surface_show_page ( surface );
+			//		cairo_surface_show_page ( surface );
 		}
 	}
 

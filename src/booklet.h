@@ -40,7 +40,6 @@ class Booklet {
 	void do_work();
 	cairo_surface_t *surface;
 	cairo_status_t cairo_status;
-	double width, height;
 
 	typedef std::vector<int> wanted_t;
 	wanted_t wanted;
@@ -50,6 +49,7 @@ class Booklet {
 
 	typedef int ChartType;
 public:
+	double width, height;
 	enum State {
 		PENDING,
 		FETCHING,

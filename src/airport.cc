@@ -56,6 +56,25 @@ bool compare_charts (Chart* first, Chart *second, Booklet *bk )
 }
 
 bool
+Airport::layout_blank( Booklet *booklet, cairo_t *cr ) const {
+	cairo_save (cr);
+
+	cairo_scale( cr, (float)( booklet->width / 2 ) / 100, (float)booklet->height / 100 );
+
+	for ( int y = 10; y < 100; y+=5 ){
+		cairo_move_to(cr, 5, y );
+		cairo_line_to(cr, 95, y);
+		cairo_set_line_width (cr, 0.15);
+		cairo_stroke (cr);
+	}
+
+	cairo_restore(cr);
+
+	return true;
+}
+
+
+bool
 Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 
 	cairo_t *cr = cairo_create(surface);
@@ -75,16 +94,16 @@ Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 
 	num_charts = wanted.size();
 
-	size_t num_pages = ceil( (float)num_charts / 2 );
+	size_t num_pages = num_charts / 2 ; //ceil( (float)num_charts / 2 );
 
 	for ( charts_t::const_iterator chart = wanted.begin(); chart != wanted.end(); ++chart ){
 		LOG_DEBUG("Chart " << (*chart)->str_type() << " : " << (*chart)->to_s() );
 	}
-	LOG_ERROR( num_charts << " charts" );
+	LOG_DEBUG( num_charts << " charts" );
 
 	LOG_DEBUG("Need at least " << num_pages << " pages" );
 
-	while ( num_pages % 4 ){
+	while ( num_pages % 2 ){
 		num_pages++;
 	}
 
@@ -94,43 +113,66 @@ Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 
 	LOG_DEBUG( "------------" );
 
-	for ( size_t page_num = 0; page_num < num_pages; ++page_num ){
+	for ( size_t curpage = 0; curpage < num_pages; ++curpage ){
 
-		for ( int side=0; side <= 1; side++ ){
+		LOG_DEBUG( "Page: " << curpage );
 
-
-			cairo_save (cr);
-
-			if ( side ) {
-				chart_num = page_num;
-
-				LOG_ERROR( "RSIDE: " << chart_num );
-				cairo_translate (cr, 400, 0 );
-			} else {
-				chart_num = ( (num_pages*2) - page_num ) - 1;
-
-				LOG_ERROR( "LSIDE: " << chart_num );
-			}
-
-			if ( wanted.size() > chart_num ){
-				Chart *chart = wanted[ chart_num ];
-				chart->layout_contents( booklet, cr );
-			} else {
-
-			}
-			cairo_restore (cr);
-
-			cairo_save (cr);
-			std::string pg("Pg ");
-			pg += boost::lexical_cast<std::string>(chart_num);
-			cairo_move_to(cr, side ? 600 : 20, 30 );
-			cairo_show_text(cr, pg.c_str() ); 
-			cairo_restore(cr);
-
-			LOG_DEBUG( "----------------------" );
+		if ( curpage % 2 ) {
+			chart_num = curpage;
+		} else {
+			chart_num = ( (num_pages*2) - curpage ) - 1;
 		}
 
-		 cairo_surface_show_page ( surface );
+		cairo_save (cr);
+
+		if ( wanted.size() > chart_num ){
+			wanted[ chart_num ]->layout_contents( booklet, cr );
+		} else {
+			this->layout_blank( booklet, cr );
+		}
+
+
+		std::string pg("Pg ");
+		pg += boost::lexical_cast<std::string>(chart_num);
+		cairo_move_to(cr, 20,10 );
+		cairo_show_text(cr, pg.c_str() ); 
+
+		cairo_restore (cr);
+
+
+		if ( curpage % 2 ) {
+			chart_num = ( (num_pages*2) - curpage ) - 1;
+		} else {
+			chart_num = curpage;
+		}
+
+cairo_save (cr);
+		cairo_move_to(cr, booklet->width/2, 0 );
+		cairo_set_source_rgb (cr, 0.8, 0.8, 0.8 );
+		cairo_set_line_width( cr, 0.5 );
+		cairo_line_to(cr, booklet->width/2, booklet->height );
+
+		cairo_stroke (cr);
+cairo_restore (cr);
+		cairo_save (cr);
+
+
+		cairo_translate (cr, booklet->width/2, 0 );
+
+		if ( wanted.size() > chart_num ){
+			wanted[ chart_num ]->layout_contents( booklet, cr );
+		} else {
+			this->layout_blank( booklet, cr );
+		}
+
+		pg="Pg ";
+		pg += boost::lexical_cast<std::string>(chart_num);
+		cairo_move_to(cr, 300, 10 );
+		cairo_show_text(cr, pg.c_str() ); 
+
+		cairo_restore (cr);
+
+		cairo_surface_show_page ( surface );
 	}
 
 	return true;

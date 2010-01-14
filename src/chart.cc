@@ -262,7 +262,7 @@ Chart::set_property( const std::string& name, const std::string& value ){
 
 unsigned short int 
 Chart::runway() const {
-	static const boost::regex e(".* (\\d\\d)$");
+	static const boost::regex e(".*RWY (\\d\\d).*$");
 	static boost::smatch rw;
 	if ( boost::regex_match( this->name, rw, e ) ){
 		return boost::lexical_cast<unsigned short int>( rw[1] );

@@ -38,6 +38,8 @@ public:
 
 	bool bind( Booklet *booklet, cairo_surface_t *surface ) const;
 
+	bool layout_blank( Booklet *booklet, cairo_t *cr ) const;
+
 	~Airport();
 };
 
