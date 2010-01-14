@@ -94,94 +94,45 @@ Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 
 	LOG_DEBUG( "------------" );
 
-	for ( size_t curpage = 0; curpage < num_pages; ++curpage ){
+	for ( size_t page_num = 0; page_num < num_pages; ++page_num ){
 
-		LOG_ERROR( "Page: " << curpage );
+		for ( int side=0; side <= 1; side++ ){
 
-		if ( curpage % 2 ) {
-			LOG_ERROR("Odd");
-			chart_num = curpage;
-		} else {
-			LOG_ERROR("Even");
-			chart_num = ( (num_pages*2) - curpage ) - 1;
-		}
 
-		if ( wanted.size() > chart_num ){
-			Chart *chart = wanted[ chart_num ];
 			cairo_save (cr);
-			chart->layout_contents( booklet, cr );
+
+			if ( side ) {
+				chart_num = page_num;
+
+				LOG_ERROR( "RSIDE: " << chart_num );
+				cairo_translate (cr, 400, 0 );
+			} else {
+				chart_num = ( (num_pages*2) - page_num ) - 1;
+
+				LOG_ERROR( "LSIDE: " << chart_num );
+			}
+
+			if ( wanted.size() > chart_num ){
+				Chart *chart = wanted[ chart_num ];
+				chart->layout_contents( booklet, cr );
+			} else {
+
+			}
 			cairo_restore (cr);
 
-
-
-			LOG_ERROR( "LSIDE: " << chart_num  << " : " << chart->to_s() );
-		} else {
-			LOG_ERROR( "LSIDE: " << chart_num << " intentionally blank" );
-		}
-
-		std::string pg("Pg ");
-		pg += boost::lexical_cast<std::string>(chart_num);
-		cairo_move_to(cr, 20,30 );
-		cairo_show_text(cr, pg.c_str() ); 
-
-		chart_num++;
-
-		if ( curpage % 2 ) {
-			LOG_ERROR("Odd");
-			chart_num = ( (num_pages*2) - curpage ) - 1;
-		} else {
-			LOG_ERROR("Even");
-			chart_num = curpage;
-		}
-
-
-		if ( wanted.size() > chart_num ){
-			Chart *chart = wanted[ chart_num ];
 			cairo_save (cr);
-			cairo_translate (cr, 400, 0 );
-			chart->layout_contents( booklet, cr );
-			cairo_restore (cr);
-			LOG_ERROR( "RSIDE: " << chart_num  << " : " << chart->to_s() );
-		} else {
-			LOG_ERROR( "RSIDE: " << chart_num << " intentionally blank" );
+			std::string pg("Pg ");
+			pg += boost::lexical_cast<std::string>(chart_num);
+			cairo_move_to(cr, side ? 600 : 20, 30 );
+			cairo_show_text(cr, pg.c_str() ); 
+			cairo_restore(cr);
+
+			LOG_DEBUG( "----------------------" );
 		}
 
-		LOG_ERROR( "------------" );
-
-		pg="Pg ";
-		pg += boost::lexical_cast<std::string>(chart_num);
-		cairo_move_to(cr, 600,30 );
-		cairo_show_text(cr, pg.c_str() ); 
-
-		chart_num++;
-
-
-		// Chart *chart = charts[ curpage ];
-		// cairo_save (cr);
-		// cairo_translate (cr, 400, 0 );
-		// (*chart)->layout( booklet, cr );
-		// cairo_restore (cr);
 		 cairo_surface_show_page ( surface );
 	}
-	// for ( charts_t::iterator chart = charts.begin(); chart != charts.end(); ++chart ){
-	// 	if ( ! booklet->is_wanted( (*chart)->type ) ){
-	// 		continue;
-	// 	}
-	// 	cairo_save (cr);
 
-
-
-	// 	if ( 0 == ( page++ % 2 ) ) {
-	// 		if ( page > 1 ){
-	// 			cairo_surface_show_page ( surface );
-	// 		}
-	// 	} else {
-	// 		cairo_translate (cr, 400, 0 );
-	// 	}
-	// 	(*chart)->layout( booklet, cr );
-	// 	cairo_restore (cr);
-
-	// }
 	return true;
 }
 
