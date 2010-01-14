@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/cupertino/jquery-ui.css" type="text/css" rel="Stylesheet" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="js/plates.js"></script>
+    <style type="text/css">
+      #chart_types {
+	  list-style-type:none;
+	  margin-left:auto;
+	  margin-right:auto;
+	  width: 650px;
+      }
+      #chart_types li {
+	  margin: 0 3px 3px 3px; padding: 0.4em; 
+	  padding-left: 1.5em; 
+	  font-size: 1.4em; 
+	  height: 18px; 
+	  text-align:left
+      }
+      #chart_types li span {
+	  position: absolute; margin-left: -1.3em;
+      }
+
+    </style>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+    <title>IFR Approach Plate Bundler</title>
+  </head>
+  <body>
+    <h2 style="margin-top: 30px; text-align:center; font-weight: bold;">
+      IFR Approach Plate Bundler
+    </h2>
+
+    <div  style="margin-top: 30px; text-align:center;">
+
+      <ul id="errors" style="color: red; font-size: 1.1em;"></ul>
+
+      <form action="#" method="post" id="form">
+	Enter Airport codes,<br/>
+	seperated by commas or space:<br/>
+	<input type="text" name="airports" id="airports" size="50"/><input type="submit" name="submit" value="Create PDF"/>
+	<br/>
+	<ul id="chart_types">
+	  <li id="APD" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="APD" value="true" CHECKED/>APD - Airport Diagram
+	  </li>
+	  <li id="IAP" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="IAP" value="true" CHECKED/>IAP - Instrument Approach Plate
+	  </li>
+	  <li id="MIN" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="MIN" value="true" CHECKED/>MIN - Minimums Information
+	  </li>
+	  <li id="DP" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="DP" value="true" CHECKED/>DP - Departure Procedures
+	  </li>
+	  <li id="STAR" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="STAR" value="true" CHECKED/>STAR - Standard Terminal Arrival
+	  </li>
+	  <li id="CVFP" class="ui-state-default">
+	    <span class="ui-icon ui-icon-arrowthick-2-n-s"></span>
+	    <input type="checkbox" name="CVFP" value="true" CHECKED/>CVFP - Charted Visual Flight Procedures
+	  </li>
+	</ul>
+
+
+      </form>
+
+      <img src="img/throbber.gif" width="220" height="19" style="display:none;" id="throbber"/>
+      <div id="dl" style="display: none;">
+	Your charts are ready to <a href="#" title="Download Charts" id="dlink">download</a>
+	<br/>
+	<a id="restart" href="#">Create Another</a>
+      </div>
+      <ul id="status" style=""></ul>
+    </div>
+    <div style="position: absolute; top: 3px; right: 5px; font-size: 0.8em;">
+      Like this?  <a href="info/">Learn more</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,17 @@
+== Introduction
+
+Mod Plates is a apache module that downloads for approach plates in PDF format from http://www.naco.faa.gov/, rotates and scales them, and then outputs them in a combined PDF for easier printing and viewing.
+
+== Installation
+
+Install apache 2.2 headers, libxml2-dev, libapreq2-dev, libaprutil1-dev, libpoppler-dev, libcairo2-dev, libcurl4-openssl-dev, and cmake
+
+In a directory where you want to build the source type cmake <path to source>
+
+after cmake (hopefully) finds the pre-requisites, type make to compile
+
+As far as I know, this has yet to be built by anyone else.  Therefore it very probably has hidden dependancies on something on my system.  If you encounter problems let me know and I'll attempt to help you.
+
+== License
+
+GPL version 3.  

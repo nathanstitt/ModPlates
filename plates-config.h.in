@@ -1,0 +1,4 @@
+
+#define Plates_VERSION_MAJOR @Plates_VERSION_MAJOR@
+#define Plates_VERSION_MINOR @Plates_VERSION_MINOR@
+

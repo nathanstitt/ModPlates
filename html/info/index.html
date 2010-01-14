@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+    <title>IFR Approach Plate Bundles - Information</title>
+  </head>
+  <body>
+    <p>
+      Hi, I'm Nathan Stitt, the creator of the IFR Approach plate bundler. 
+    </p>
+    <p>
+      I did this becouse I was sick of attempting to fold the huge NACO chart booklet just right so I could see the approach, then attempting to clip it to my kneeboard.   Invariably, it'd slip out just about the time I reached the FAF and realized I was thinking <i>'what were the minimum's again?'</i>  I'm sure that that never happens to anyone else...
+    </p><p>
+    The Jeppesen charts are the way to go with their booklet format, but I felt the eastern US subscription was too expensive for the amount of use I'd get out of them.
+    </p><p>
+      For awhile I simply printed each one that I thought I'd need, but that was unwieldly as well.  Picture a huge stack of 8 1/2 x 11 paper flying around the cockpit and you get an idea of the mess.
+    </p>
+    <p>
+      I then started downloading the charts from <a "http://www.naco.faa.gov/index.asp?xml=naco/online/d_tpp">NACO</a>, opening each one in  <a href="http://www.inkscape.org/">Inkscape</a>, rotating and scaling them to make a booklet and printing them.  That worked great, except it took forever.
+    </p>
+    <p>
+      I then decided <i>Hey, I'm a programmer, lets fix this, how hard can it be?</i>  Of course no sooner than I finished it I becae aware of other solutions such as:
+      <ul>
+	<li>
+	  <a href="http://dranz.readyhosting.com/">NACOmatic</a> - Makes custom PDFs of entires states available to download.
+	</li>
+      </ul>
+      Of course, I still like my solution the best. Some of the technical details are:
+    </p>
+    <p>
+      <ul>
+	<li>
+	  The code behind the site is a custom apache module written in C/C++.   By day I'm a ruby/rails programmer.  Don't get me wrong, I love rails, but was looking for something to take me back to the good 'ole C/C++ days.  Therefore, I chose to write this in a fasion I never would have done for a <i>real</i> project.   Surprisingly it worked out very well, and didn't seem to take much longer to write than a comparably Rails project.  
+	  </li>
+	  <li>
+	    I can wholehartedly recommend CMake over autoconf / automake.  I hope to never write a configure.ac file again.
+	  </li>
+	</li>
+	<li>
+	  For the JS, I chose JQuery, simply becouse I was getting rusty with it after spending quite a bit of time with Prototype lately.  I was also pleased with JQuery, but I did miss the nice JS additions prototype offers.  Of course this site isn't really cutting edge or complex.
+	</li>
+	<li>
+	  If you are really interested, I've open-sourced the code and thrown it up on github.
+	</li>
+      </ul>
+    <p>
+      I welcome comments and suggestions.  You can reach me by sending email to my first name @stitt.org.
+    </p>
+  </body>
+</html>
