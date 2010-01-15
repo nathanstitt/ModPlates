@@ -93,7 +93,7 @@ mod_plates_start( request_rec *r ){
 	key = plates_start_booklet( airports, charts, i );
 
 	if ( key ){
-		ap_rprintf(r, "{ ok:true, key: %i, errors:[", key );
+		ap_rprintf(r, "{ ok:true, key: %lu, errors:[", (long unsigned)key );
 		plates_report_not_found( key, &mod_plates_json_output, r );
 		ap_rputs( "] }", r );
 	} else {
@@ -101,18 +101,29 @@ mod_plates_start( request_rec *r ){
 	}
 	return OK;
 }
-
+/* 
+ * gets the key from the uri and converts it to int
+ */
+booklet_key_t 
+key_from_req( request_rec *r ){
+	apr_table_t *args = apr_table_make( r->pool, APREQ_DEFAULT_NELTS); 
+	apreq_parse_query_string( r->pool, args, r->parsed_uri.query);
+	const char *key = apreq_params_as_string( r->pool, args, "key", APREQ_JOIN_AS_IS);
+	if ( strlen( key ) ){
+		return plates_to_key( key );
+	} else {
+		return 0;
+	}
+}
 /*
  *  handles the /status url, outputs the status of the given booklet
  */
 static int
 mod_plates_status( request_rec *r ){
-	apreq_handle_t* req = (apreq_handle_t*)apreq_handle_apache2(r);
-	const apreq_param_t *key = apreq_param(req, "key");
+	booklet_key_t key = key_from_req(r);
 	if ( key ){
-		booklet_key_t bkey = plates_to_key( key->v.data );
-		ap_rprintf(r, "{ ok:true,status:'%s', messages: [", plates_status( bkey ) );
-		plates_report_status( bkey, &mod_plates_json_output, r );
+		ap_rprintf(r, "{ ok:true,status:'%s', messages: [", plates_status( key ) );
+		plates_report_status( key, &mod_plates_json_output, r );
 		ap_rputs( "] }", r );
 	} else {
 		ap_rputs( "{ 'ok':false, 'errors': ['key not found, perhaps it expired?'] }", r  );
@@ -127,14 +138,12 @@ mod_plates_status( request_rec *r ){
  */
 static int
 mod_plates_retrieve( request_rec *r ){
-	apreq_handle_t* req = (apreq_handle_t*)apreq_handle_apache2(r);
-	const apreq_param_t *key = apreq_param(req, "key");
+	booklet_key_t key = key_from_req(r);
 	if ( key ){
-		booklet_key_t bkey = plates_to_key( key->v.data );
 		const char *data;
 		size_t len=0;
 		const char *fname;
-		if ( ! ( len = plates_booklet_data( bkey, &data, &fname ) ) ) {
+		if ( ! ( len = plates_booklet_data( key, &data, &fname ) ) ) {
 			ap_set_content_type(r, "text/plain" );
 			ap_rputs( "Failed to render PDF", r  );
 		} else {
@@ -186,23 +195,15 @@ mod_plates_method_handler (request_rec *r) {
 	/*  everything we do is via JSON  */
         ap_set_content_type(r, "application/json" );
 
-	/* this proably isn't the best method of determing the sub url's we want
-	   suggestions for betterment are welcome
-	 */
-	for (arg = (char*)apr_strtok( apr_pstrdup( r->pool, r->uri), sep, &tok); arg; 
-	     arg = (char*)apr_strtok(NULL, sep, &tok) ){
-		if ( ! strcasecmp( arg,"start" ) ) {
-			return mod_plates_start( r );
-		}
-		if ( ! strcasecmp( arg,"status" ) ) {
-			return mod_plates_status( r );
-		}
-		if ( ! strcasecmp( arg, "retrieve" ) ) {
-			return mod_plates_retrieve( r );
-		}
+	if ( strstr(r->uri, "/start") ){
+		return mod_plates_start( r );
+	} else if ( strstr(r->uri, "/status") ){
+		return mod_plates_status( r );
+	} else if ( strstr(r->uri, "/retrieve") ){
+		return mod_plates_retrieve( r );
+	} else {
+		return HTTP_NOT_FOUND;
 	}
-
-	return HTTP_NOT_FOUND;
 }
 
 /* We're shutting down, cleanup
@@ -235,11 +236,14 @@ static int mod_plates_initialize(apr_pool_t *pconf, apr_pool_t *plog,
 		modplates_config *cfg = ap_get_module_config(
 			s->module_config, &plates_module);
 
+		apr_initialize();
+
 		plates_config( cfg->directory );
 
 		apr_pool_cleanup_register(pconf, NULL,
 					  destroy_modplates,
 					  apr_pool_cleanup_null);
+
 	}
 	return OK;
 }
