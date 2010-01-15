@@ -138,9 +138,6 @@ Booklet::do_work(){
 	      ++airport )
 	{
 		(*airport)->bind( this, surface );
-		if ( airports.size() > 1 ){
-			//		cairo_surface_show_page ( surface );
-		}
 	}
 
 	{
@@ -155,7 +152,7 @@ Booklet::do_work(){
 	}
 	curl_easy_cleanup(curl);
 	this->log_msg("Completed");
-	LOG_INFO( "Booklet Done Work" );
+	LOG_DEBUG( "Booklet Done Work" );
 }
 
 
@@ -169,7 +166,7 @@ Booklet::enable_chart_type( ChartType t, int order ){
 bool
 Booklet::is_wanted( ChartType t ) const {
 	int ord = this->get_sort_order(t);
-	LOG_INFO("IS WANTED? " << Chart::type_to_str((Chart::Type)t) << " : " << ord );
+	LOG_DEBUG("IS WANTED? " << Chart::type_to_str((Chart::Type)t) << " : " << ord );
 	return this->get_sort_order(t);
 }
 

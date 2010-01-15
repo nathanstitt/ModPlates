@@ -44,7 +44,7 @@ bool compare_charts (Chart* first, Chart *second, Booklet *bk )
 {
 	int fs = bk->get_sort_order( first->type );
 	int ss = bk->get_sort_order( second->type );
-	LOG_INFO( "Compare : " << first->to_s() << " ~ " << second->to_s() << " = " << fs << " < " << ss );
+	LOG_DEBUG( "Compare : " << first->to_s() << " ~ " << second->to_s() << " = " << fs << " < " << ss );
 
 	if (  fs == ss ){
 		return first->compare_identical( second );
@@ -123,6 +123,7 @@ Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 			chart_num = ( (num_pages*2) - curpage ) - 1;
 		}
 
+
 		cairo_save (cr);
 
 		if ( wanted.size() > chart_num ){
@@ -131,31 +132,33 @@ Airport::bind( Booklet *booklet, cairo_surface_t *surface ) const {
 			this->layout_blank( booklet, cr );
 		}
 
-
-		std::string pg("Pg ");
-		pg += boost::lexical_cast<std::string>(chart_num);
-		cairo_move_to(cr, 20,10 );
-		cairo_show_text(cr, pg.c_str() ); 
-
 		cairo_restore (cr);
 
+		std::string pg( this->identifier + " Pg ");
+		pg += boost::lexical_cast<std::string>(chart_num+1);
+		cairo_select_font_face(cr, "gotham",
+				       CAIRO_FONT_SLANT_NORMAL,
+				       CAIRO_FONT_WEIGHT_BOLD);
+
+		cairo_move_to(cr, 20, booklet->height-20 );
+		cairo_show_text(cr, pg.c_str() ); 
 
 		if ( curpage % 2 ) {
 			chart_num = ( (num_pages*2) - curpage ) - 1;
 		} else {
 			chart_num = curpage;
 		}
-
-cairo_save (cr);
+		
+		// center dividing line
+		cairo_save (cr);
 		cairo_move_to(cr, booklet->width/2, 0 );
 		cairo_set_source_rgb (cr, 0.8, 0.8, 0.8 );
 		cairo_set_line_width( cr, 0.5 );
 		cairo_line_to(cr, booklet->width/2, booklet->height );
-
 		cairo_stroke (cr);
-cairo_restore (cr);
-		cairo_save (cr);
+		cairo_restore (cr);
 
+		cairo_save (cr);
 
 		cairo_translate (cr, booklet->width/2, 0 );
 
@@ -164,15 +167,39 @@ cairo_restore (cr);
 		} else {
 			this->layout_blank( booklet, cr );
 		}
+		cairo_restore (cr);
 
-		pg="Pg ";
-		pg += boost::lexical_cast<std::string>(chart_num);
-		cairo_move_to(cr, 300, 10 );
+		cairo_save (cr);
+
+		pg = this->identifier + " Pg ";
+		pg += boost::lexical_cast<std::string>(chart_num+1);
+		cairo_select_font_face(cr, "gotham",
+				       CAIRO_FONT_SLANT_NORMAL,
+				       CAIRO_FONT_WEIGHT_BOLD);
+
+		cairo_move_to(cr, booklet->width-70, booklet->height-20 );
 		cairo_show_text(cr, pg.c_str() ); 
 
 		cairo_restore (cr);
 
-		cairo_surface_show_page ( surface );
+		cairo_save (cr);
+
+		pg = "www.stitt.org/plates/";
+		cairo_select_font_face(cr, "gotham",
+				       CAIRO_FONT_SLANT_ITALIC,
+				       CAIRO_FONT_WEIGHT_NORMAL );
+		cairo_move_to(cr, booklet->width/2+5, booklet->height/2 + 150 );
+		cairo_rotate(cr, M_PI/2);
+		cairo_show_text(cr, pg.c_str() ); 
+
+		cairo_restore (cr);
+
+
+
+
+//		if ( curpage < num_pages-1 ){
+			cairo_surface_show_page ( surface );
+//		}
 	}
 
 	return true;

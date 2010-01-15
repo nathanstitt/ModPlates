@@ -47,7 +47,7 @@ Plates::~Plates(){
 
 void
 create_instance( const std::string &dir_name ){
-	_instance=new Plates( dir_name, LOG_MASK_LEVEL_INFO );
+	_instance=new Plates( dir_name, LOG_MASK_LEVEL_DEBUG );
 }
 
 Plates*
@@ -92,7 +92,7 @@ Plates::start_booklet( const std::string &airports, char** charts, int num_chart
 	LOG_ERROR( "Number of chart types: " << num_charts );
 	boost::shared_ptr<Booklet> booklet=this->current_cycle->make_booklet( airports );
 	for ( int i = 0; i< num_charts; i++ ){
-		LOG_ERROR( "Chart: " << charts[i] );
+		LOG_DEBUG( "Chart: " << charts[i] );
 		booklet->enable_chart_type( Chart::str_to_type(charts[i]), i );
 	}
 

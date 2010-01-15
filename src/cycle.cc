@@ -139,6 +139,9 @@ Cycle::process_node(xmlTextReaderPtr reader) {
 void
 Cycle::add_airport_to_booklet( boost::shared_ptr<Booklet> &bk, const std::string &id ){
 
+	static const boost::regex re("^K(.*)$");
+	static boost::smatch no_k_code;
+
 	std::string upper_id(id);
 	std::transform(upper_id.begin(), upper_id.end(), upper_id.begin(), toupper );
 
@@ -146,7 +149,20 @@ Cycle::add_airport_to_booklet( boost::shared_ptr<Booklet> &bk, const std::string
 
 	map_t::iterator airport = map.find( upper_id );
 	if ( airport == map.end() ){
-		bk->not_found.push_back( upper_id );
+		LOG_DEBUG("NOT FOUND" );
+		if ( boost::regex_match( upper_id, no_k_code, re ) ){
+			LOG_DEBUG("Found and removed K, searching as " << no_k_code[1] );
+			airport = map.find( no_k_code[1] );
+			if ( airport == map.end() ){
+				LOG_DEBUG("Still NOT FOUND" );
+				bk->not_found.push_back( upper_id );
+			} else {
+				bk->airports.push_back( airport->second );
+			}
+		} else {
+			LOG_DEBUG("NOT FOUND" );
+			bk->not_found.push_back( upper_id );
+		}
 	} else {
 		bk->airports.push_back( airport->second );
 	}

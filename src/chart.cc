@@ -142,8 +142,6 @@ Chart::fetch( Booklet *booklet ){
 	std::string log("Fetching " );
 	log += this->name;
 
-
-	LOG_INFO( log << " into " << this->working_path() );
 	FILE *dest = fopen( this->working_path().c_str(), "w");
 	if (! dest ){
 		LOG_ERROR( "Failed to open chart working file: " << this->working_path() );

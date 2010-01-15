@@ -1,77 +1,158 @@
 PlatesScreen = {
-  key: 0
-};
-function appendErrors(errors){
-  if ( ! errors || ! errors.length )
-    return;
-   $.each( errors, function( indx,val ){
-	     $('#errors').append( '<li class="error">'+val+'</li>' );
-   });
-}
+	URL: 'ajax/',
+	KEY: 0,
+	initialize:function(){
+		PlatesScreen.KEY = $.cookie('key');
+		$("#chart_types").sortable();
+		$("#chart_types").disableSelection();
 
+		$("#restart").click(function(){
+					    PlatesScreen.showPrevDL();
+					    $("#dl,#throbber").hide();
+		    			    $("#form").show();
+					    $('#status,#errors').empty();
+				    });
 
-function bookletStarted( data,status ){
-  PlatesScreen.key = data.key;
-  if ( data.errors.length ){
-    $('#errors').append( '<li class="error">'+ data.errors.join(', ') + ' were not found</li>' );
-  }
-  $.PeriodicalUpdater('ajax/status', {
-			data: {
-			  key: PlatesScreen.key
-			},
-			type: 'json'
-		      }, function( data ){
-			appendErrors( data.errors );
-			if ( 'READY' == data.status ){
-			  $("#dlink").attr('href',"ajax/retrieve?key=" + PlatesScreen.key);
-			  $("#dl").show();
-			  $("#throbber").hide();
-			  return false;
-			} else if ( data.ok ){
-    			  $('#status').empty();
-			  $.each( data.messages, function( indx,val ){
-				    $('#status').prepend( '<li>'+val+'</li>' );
-				  } );
-			  return true;
-			} else {
-			  return false;
-			}
-
-		      } );
-
-}
-
-$(document).ready( function() {
-		    $("#chart_types").sortable();
-		    $("#chart_types").disableSelection();
-
-		    $("#restart").click(function(){
-					  $("#dl").hide();
-		    			  $("#form").show();
-					  $('#status').empty();
-					  $('#errors').empty();
-					  $("#throbber").hide();
-					});
-
-		    $("#form").submit(function() {
-					$("#form").hide();
-					$("#throbber").show();
-					var charts = jQuery.grep( $("#chart_types").sortable('toArray'), function(n,i){
-								    return $("input[name='"+ n + "']").attr('checked');
-								  });
-					jQuery.get( 'ajax/start',{
+		$("#form").submit(function() {
+					  $("#prevdl,#form").hide();
+					  $("#throbber").show();
+					  var charts = jQuery.grep( $("#chart_types").sortable('toArray'), function(n,i){
+									    return $("input[name='"+ n + "']").attr('checked');
+								    });
+					  jQuery.get( PlatesScreen.URL+'start',{
 						       airports: $('#airports').val(),
 						       charts: charts
-						     }, bookletStarted, "json" );
+						     }, PlatesScreen.bookletStarted, "json" );
 					return false;
 				      } );
+		PlatesScreen.showPrevDL();
+	},
 
-		  });
+	showDL: function(){
+		$("#dlink").attr('href', PlatesScreen.URL + "retrieve?key=" + PlatesScreen.KEY );
+		$("#dl").show();
+	},
+
+	showPrevDL: function(){
+		if ( PlatesScreen.KEY ){
+			$("#prevdlink").attr('href', PlatesScreen.URL + "retrieve?key=" + PlatesScreen.KEY );
+			$("#prevdl").show();
+		}
+	},
+
+	appendErrors: function (errors){
+		if ( ! errors || ! errors.length )
+			return;
+		$.each( errors, function( indx,val ){
+				$('#errors').append( '<li class="error">'+val+'</li>' );
+			});
+	},
+
+	bookletStarted: function ( data,status ){
+		PlatesScreen.KEY = data.key;
+		$.cookie('key',data.key );
+		if ( data.errors.length ){
+			$('#errors').append( '<li class="error">'+ data.errors.join(', ') + ' were not found</li>' );
+		}
+		$.PeriodicalUpdater( PlatesScreen.URL + 'status', {
+					     data: { key: PlatesScreen.KEY },
+					     type: 'json'
+				     }, PlatesScreen.updateRecved );
+
+	},
+
+	updateRecved: function( data ){
+		PlatesScreen.appendErrors( data.errors );
+		if ( 'READY' == data.status ){
+			PlatesScreen.showDL();
+			$("#throbber").hide();
+			return false;
+		} else if ( data.ok ){
+    			$('#status').empty();
+			$.each( data.messages, function( indx,val ){
+					$('#status').prepend( '<li>'+val+'</li>' );
+				} );
+			return true;
+		} else {
+			return false;
+		}
+
+	}
+
+
+};
 
 
 
 
 
+$(document).ready( PlatesScreen.initialize );
+
+
+
+
+
+/**
+ * Create a cookie with the given name and value and other optional parameters.
+ *
+ * @example $.cookie('the_cookie', 'the_value');
+ * @desc Set the value of a cookie.
+ * @example $.cookie('the_cookie', 'the_value', { expires: 7, path: '/', domain: 'jquery.com', secure: true });
+ * @desc Create a cookie with all available options.
+ * @example $.cookie('the_cookie', 'the_value');
+ * @desc Create a session cookie.
+
+ * Get the value of a cookie with the given name.
+ *
+ * @example $.cookie('the_cookie');
+ * @desc Get the value of a cookie.
+ *
+
+ * @author Klaus Hartl/klaus.hartl@stilbuero.de
+ */
+
+jQuery.cookie = function(name, value, options) {
+    if (typeof value != 'undefined') { // name and value given, set cookie
+        options = options || {};
+        if (value === null) {
+            value = '';
+            options.expires = -1;
+        }
+        var expires = '';
+        if (options.expires && (typeof options.expires == 'number' || options.expires.toUTCString)) {
+            var date;
+            if (typeof options.expires == 'number') {
+                date = new Date();
+                date.setTime(date.getTime() + (options.expires * 24 * 60 * 60 * 1000));
+            } else {
+                date = options.expires;
+            }
+            expires = '; expires=' + date.toUTCString(); // use expires attribute, max-age is not supported by IE
+        }
+        // CAUTION: Needed to parenthesize options.path and options.domain
+        // in the following expressions, otherwise they evaluate to undefined
+        // in the packed version for some reason...
+        var path = options.path ? '; path=' + (options.path) : '';
+        var domain = options.domain ? '; domain=' + (options.domain) : '';
+        var secure = options.secure ? '; secure' : '';
+        document.cookie = [name, '=', encodeURIComponent(value), expires, path, domain, secure].join('');
+    } else { // only name given, get cookie
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    return null;
+};
 
 
 /**
@@ -210,7 +291,7 @@ $(document).ready( function() {
        }
        remoteData = null;
        setTimeout(getdata, timerInterval);
-     }
+     };
 
 
      ajaxSettings.error = function (xhr, textStatus) {

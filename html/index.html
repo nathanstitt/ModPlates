@@ -3,6 +3,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/cupertino/jquery-ui.css" type="text/css" rel="Stylesheet" />
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/plates.js"></script>
@@ -23,7 +24,15 @@
       #chart_types li span {
 	  position: absolute; margin-left: -1.3em;
       }
-
+      #prevdl {
+	  padding-bottom: 1em;
+      }
+      ul.msgs {
+	  text-align: left;
+	  margin-left:auto;
+	  margin-right:auto;
+	  width: 500px;
+      }
     </style>
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
     <title>IFR Approach Plate Bundler</title>
@@ -35,7 +44,10 @@
 
     <div  style="margin-top: 30px; text-align:center;">
 
-      <ul id="errors" style="color: red; font-size: 1.1em;"></ul>
+      <ul class="msgs" id="errors" style="color: red; font-size: 1.1em;"></ul>
+      <div id="prevdl" style="display: none;">
+	<a href="#" title="Download Charts" id="prevdlink">Download previous charts.</a>
+      </div>
 
       <form action="#" method="post" id="form">
 	Enter Airport codes,<br/>
@@ -78,7 +90,7 @@
 	<br/>
 	<a id="restart" href="#">Create Another</a>
       </div>
-      <ul id="status" style=""></ul>
+      <ul class="msgs" id="status" style=""></ul>
     </div>
     <div style="position: absolute; top: 3px; right: 5px; font-size: 0.8em;">
       Like this?  <a href="info/">Learn more</a>
