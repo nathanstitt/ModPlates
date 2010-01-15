@@ -4,7 +4,13 @@ Mod Plates is a apache module that downloads for approach plates in PDF format f
 
 == Installation
 
-Install apache 2.2 headers, libxml2-dev, libapreq2-dev, libaprutil1-dev, libpoppler-dev, libcairo2-dev, libcurl4-openssl-dev, and cmake
+Install apache 2.2 headers, libxml2, libapreq2, libaprutil1, libpoppler, libcairo2, libcurl, boost ver1.4 c++ headers, and cmake
+
+For Debian / Ubuntu that equals out to:
+
+sudo apt-get install cmake libxml2-dev libapreq2-dev libaprutil1-dev libpoppler-glib-dev libcairo2-dev libcurl4-openssl-dev libboost1.40-all-dev
+
+Of cource, you'll also need at least make and g++, but you probably already have them.
 
 In a directory where you want to build the source type cmake <path to source>
 

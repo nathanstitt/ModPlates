@@ -70,14 +70,16 @@ Booklet::status(){
 std::string
 Booklet::status_msg(){
 	switch ( this->status() ){
-		case PENDING:
-			return "PENDING";
-		case FETCHING:
-			return "FETCHING";
-		case RENDERING:
-			return "RENDERING";
-		case READY:
-			return "READY";
+	case PENDING:
+		return "PENDING";
+	case FETCHING:
+		return "FETCHING";
+	case RENDERING:
+		return "RENDERING";
+	case READY:
+		return "READY";
+	default:
+		return "UNKOWN";
 	}
 }
 

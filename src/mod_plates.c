@@ -93,7 +93,7 @@ mod_plates_start( request_rec *r ){
 	key = plates_start_booklet( airports, charts, i );
 
 	if ( key ){
-		ap_rprintf(r, "{ ok:true, key: %u, errors:[", key );
+		ap_rprintf(r, "{ ok:true, key: %i, errors:[", key );
 		plates_report_not_found( key, &mod_plates_json_output, r );
 		ap_rputs( "] }", r );
 	} else {
