@@ -45,9 +45,9 @@ int main(int argc, char* argv[]) {
 	boost::shared_ptr<Booklet> booklet=cycle->make_booklet( argv[3] );
 	
 //	booklet->enable_chart_type( Chart::str_to_type( "DP" ), 0 );
-	booklet->enable_chart_type( Chart::str_to_type( "IAP"), 1 );
-	booklet->enable_chart_type( Chart::str_to_type( "APD"), 2 );
-	booklet->enable_chart_type( Chart::str_to_type( "MIN"), 3 );
+	booklet->enable_chart_type( Chart::str_to_type( "APD"), 1 );
+	booklet->enable_chart_type( Chart::str_to_type( "IAP"), 2 );
+//	booklet->enable_chart_type( Chart::str_to_type( "MIN"), 3 );
 
 	booklet->start();
 
