@@ -1,6 +1,10 @@
 == Introduction
 
-Mod Plates is a apache module that downloads for approach plates in PDF format from http://www.naco.faa.gov/, rotates and scales them, and then outputs them in a combined PDF for easier printing and viewing.
+Mod Plates is a apache module that downloads for approach plates in PDF format from http://www.naco.faa.gov/, rotates and scales them, and then outputs them as a PDF booklet for easier printing and viewing.
+
+It works by parsing the XML datafile for the current cycle which can be found by going to http://www.naco.faa.gov/index.asp?xml=naco/online/d_tpp then into the page for the cycle.
+
+An example booklet I use for my list of frequently visited airports can be downloaded at http://nathan.stitt.org/static/ifr-plates.pdf
 
 == Installation
 
@@ -8,7 +12,7 @@ Install apache 2.2 headers, libxml2, libapreq2, libaprutil1, libpoppler, libcair
 
 For Debian / Ubuntu that equals out to:
 
-sudo apt-get install cmake libxml2-dev libapreq2-dev libaprutil1-dev libpoppler-glib-dev libcairo2-dev libcurl4-openssl-dev libboost1.40-all-dev
+sudo apt-get install cmake libxml2-dev libapreq2-dev libaprutil1-dev libpoppler-glib-dev libcairo2-dev libcurl4-openssl-dev libboost1.40-all-dev libgtk2.0-dev apache2-threaded-dev
 
 Of cource, you'll also need at least make and g++, but you probably already have them.
 
